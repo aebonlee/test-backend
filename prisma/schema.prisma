@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  email       String?   @unique
+  kakaoId     String   @unique
+  name        String
+  token       String?
+  TestResults TestResult[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Test {
+  test_id     Int          @id @default(autoincrement())
+  title       String
+  subject_id  Int
+  subject     Subject      @relation(fields: [subject_id], references: [subject_id], onDelete: Cascade)
+  questions   Question[]
+}
+
+model Subject {
+  subject_id   Int          @id @default(autoincrement())
+  subject_name String
+  tests        Test[]
+}
+
+model Question {
+  question_id   Int      @id @default(autoincrement())
+  question_text String
+  answer        Int
+  choice1       String?   // 보기 1
+  choice2       String?   // 보기 2
+  choice3       String?   // 보기 3
+  choice4       String?   // 보기 4
+  choice5       String?   // 보기 5
+  test_id       Int
+  test          Test    @relation(fields: [test_id], references: [test_id], onDelete: Cascade)
+}
+
+model TestResult {
+  user_id    Int
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  test_id    Int
+  score      Int
+  created_at DateTime @default(now())
+
+  @@id(name:"result_id", [user_id, test_id])
+}

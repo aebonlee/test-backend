@@ -1,0 +1,25 @@
+# docker-compose.yml
+
+services:
+
+  postgres:
+    container_name: postgres
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=lastmorn
+      - POSTGRES_PASSWORD=lastmorn
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+volumes:
+  postgres:
+  pgadmin:
